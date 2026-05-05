@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="plugin" group="sppagebuilder" method="upgrade">
+    <name>Custom YouTube Plugin</name>
+    <author>Dominik Henneke</author>
+    <version>1.0</version>
+    <description>A custom plugin to implement a GDPR-compliant YouTube video placeholder.</description>
+    <files>
+        <filename plugin="youtube_gdpr">youtube_gdpr.php</filename>
+        <folder>addons</folder>
+    </files>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="cache_duration" type="text" default="3600"
+                    label="Cache Duration (Seconds)"
+                    description="Set the caching duration for thumbnails on the server." />
+            </fieldset>
+        </fields>
+    </config>
+</extension>
