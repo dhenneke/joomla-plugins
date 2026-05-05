@@ -8,6 +8,7 @@
         <filename plugin="youtube_gdpr">youtube_gdpr.php</filename>
         <folder>addons</folder>
         <folder>language</folder>
+        <folder>layouts</folder>
     </files>
     <media destination="plg_sppagebuilder_youtube_gdpr">
         <folder>assets</folder>

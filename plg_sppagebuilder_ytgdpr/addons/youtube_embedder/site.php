@@ -35,7 +35,7 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
 
         $videoId = $this->extractYoutubeVideoId($youtubeUrl);
         if ($videoId === '') {
-            return '<div class="ytgdpr ytgdpr-error">' . Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_INVALID_URL') . '</div>';
+            return $this->renderLayout('error', ['message' => Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_INVALID_URL')]);
         }
 
         $watchUrl = sprintf(self::WATCH_URL_TEMPLATE, rawurlencode($videoId));
@@ -56,28 +56,19 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
         $safeAvatarLabel = $this->esc($avatarLabel);
 
         if ($thumbnailUrl !== '') {
-            return '<div class="ytgdpr">'
-                . '<a class="ytgdpr-link" href="' . $safeWatchUrl . '" target="_blank" rel="noopener noreferrer nofollow">'
-                . '<img class="ytgdpr-thumb" src="' . $safeThumbnailUrl . '" alt="' . $safeMetaTitle . '" loading="lazy" />'
-                . '<div class="ytgdpr-meta">'
-                . '<span class="ytgdpr-avatar" aria-hidden="true">' . $safeAvatarLabel . '</span>'
-                . '<span class="ytgdpr-meta-text">'
-                . '<span class="ytgdpr-meta-title">' . $safeMetaTitle . '</span>'
-                . '<span class="ytgdpr-meta-channel">' . $safeMetaChannel . '</span>'
-                . '</span>'
-                . '</div>'
-                . '<span class="ytgdpr-play" aria-hidden="true"><span class="ytgdpr-play-triangle"></span></span>'
-                . '<span class="ytgdpr-watch">' . Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_WATCH_CTA') . '</span>'
-                . '</a>'
-                . '</div>';
+            return $this->renderLayout('default', [
+                'watchUrl' => $safeWatchUrl,
+                'thumbnailUrl' => $safeThumbnailUrl,
+                'title' => $safeMetaTitle,
+                'channel' => $safeMetaChannel,
+                'avatarLabel' => $safeAvatarLabel,
+            ]);
         }
 
-        return '<div class="ytgdpr">'
-            . '<div class="ytgdpr-placeholder" role="status" aria-live="polite">'
-            . '<span class="ytgdpr-placeholder-text">' . Text::sprintf('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_THUMBNAIL_UNAVAILABLE', $safeMetaTitle) . '</span>'
-            . '<a class="ytgdpr-fallback-link" href="' . $safeWatchUrl . '" target="_blank" rel="noopener noreferrer nofollow">' . Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_PLACEHOLDER_CTA') . '</a>'
-            . '</div>'
-            . '</div>';
+        return $this->renderLayout('placeholder', [
+            'watchUrl' => $safeWatchUrl,
+            'title' => $safeMetaTitle,
+        ]);
     }
 
     public function stylesheets(): array
@@ -405,5 +396,18 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
         $modified = @filemtime($filePath);
 
         return (bool) $modified && (time() - (int) $modified) < $cacheDuration;
+    }
+
+    private function renderLayout(string $layoutName, array $displayData = []): string
+    {
+        $layoutFile = JPATH_PLUGINS . '/sppagebuilder/youtube_gdpr/layouts/addon/youtube_embedder/' . $layoutName . '.php';
+
+        if (!file_exists($layoutFile)) {
+            return '';
+        }
+
+        ob_start();
+        include $layoutFile;
+        return ob_get_clean();
     }
 }
