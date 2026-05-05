@@ -9,6 +9,9 @@
         <folder>addons</folder>
         <folder>language</folder>
     </files>
+    <media destination="plg_sppagebuilder_youtube_gdpr">
+        <folder>assets</folder>
+    </media>
     <languages folder="language">
         <language tag="en-GB">en-GB/en-GB.plg_sppagebuilder_youtube_gdpr.ini</language>
         <language tag="en-GB">en-GB/en-GB.plg_sppagebuilder_youtube_gdpr.sys.ini</language>

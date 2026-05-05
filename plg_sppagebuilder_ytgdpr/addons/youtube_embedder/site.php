@@ -20,7 +20,7 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
 
     private const WATCH_URL_TEMPLATE = 'https://www.youtube.com/watch?v=%s';
 
-    private const CSS_FILE = 'plugins/sppagebuilder/youtube_gdpr/addons/youtube_embedder/assets/css/youtube_embedder.css';
+    private const CSS_FILE = 'media/plg_sppagebuilder_youtube_gdpr/assets/css/youtube_embedder.css';
 
     public function render(): string
     {
