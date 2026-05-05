@@ -1,12 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
-    <!-- Red background -->
-    <rect width="48" height="48" rx="10" ry="10" fill="#FF0000" />
-    <!-- Play triangle, shifted slightly up-left to make room for badge -->
-    <polygon points="15,11 15,30 31,20.5" fill="#FFFFFF" />
-    <!-- Green shield badge (bottom-right) -->
-    <path d="M27,27 Q27,26 36,24 Q45,26 45,27 L45,34 Q45,41 36,44.5 Q27,41 27,34 Z" fill="#2E7D32"
-        stroke="#FFFFFF" stroke-width="1.2" />
-    <!-- White checkmark inside shield -->
-    <path d="M31,34 L34.5,37.5 L41,30" stroke="#FFFFFF" stroke-width="2.2" fill="none"
-        stroke-linecap="round" stroke-linejoin="round" />
+    <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#0F3D5E" />
+            <stop offset="100%" stop-color="#1E7A8A" />
+        </linearGradient>
+    </defs>
+    <rect width="48" height="48" rx="12" ry="12" fill="url(#bg)" />
+    <circle cx="20" cy="20" r="10" fill="#FFFFFF" fill-opacity="0.95" />
+    <polygon points="18,15 18,25 26,20" fill="#0F3D5E" />
+    <path d="M26,25 Q26,24 33,22 Q40,24 40,25 L40,31 Q40,36 33,39 Q26,36 26,31 Z" fill="#27AE60" stroke="#FFFFFF" stroke-width="1.2" />
+    <path d="M29,31 L31.5,33.5 L36.5,28.5" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
 </svg>
