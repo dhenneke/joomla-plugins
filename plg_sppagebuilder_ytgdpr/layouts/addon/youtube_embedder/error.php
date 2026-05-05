@@ -12,6 +12,6 @@ use Joomla\CMS\Language\Text;
 
 extract($displayData);
 ?>
-<div class="ytgdpr ytgdpr-error">
+<div class="ytgdpr alert alert-danger mb-0" role="alert">
     <?= $message ?? Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_INVALID_URL') ?>
 </div>
