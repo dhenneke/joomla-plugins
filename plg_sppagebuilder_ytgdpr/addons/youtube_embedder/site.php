@@ -35,44 +35,49 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
 
         $videoId = $this->extractYoutubeVideoId($youtubeUrl);
         if ($videoId === '') {
-            return '<div class="ytgdpr ytgdpr-error">' . $this->t('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_INVALID_URL') . '</div>';
+            return '<div class="ytgdpr ytgdpr-error">' . Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_INVALID_URL') . '</div>';
         }
 
         $watchUrl = sprintf(self::WATCH_URL_TEMPLATE, rawurlencode($videoId));
         $thumbnailUrl = $this->getCachedThumbnailUrl($videoId);
         $videoMeta = $this->getCachedVideoMeta($videoId);
 
-        $metaTitle = !empty($videoMeta['title']) ? (string) $videoMeta['title'] : ($title !== '' ? $title : $this->t('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_DEFAULT_TITLE'));
-        $metaChannel = !empty($videoMeta['author_name']) ? (string) $videoMeta['author_name'] : $this->t('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_DEFAULT_CHANNEL');
+        $metaTitle = !empty($videoMeta['title']) ? (string) $videoMeta['title'] : ($title !== '' ? $title : Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_DEFAULT_TITLE'));
+        $metaChannel = !empty($videoMeta['author_name']) ? (string) $videoMeta['author_name'] : Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_DEFAULT_CHANNEL');
         $avatarLabel = strtoupper(substr($metaChannel, 0, 1));
         if ($avatarLabel === '') {
             $avatarLabel = 'Y';
         }
 
-        $safeTitle = htmlspecialchars($metaTitle, ENT_QUOTES, 'UTF-8');
-        $safeWatchUrl = htmlspecialchars($watchUrl, ENT_QUOTES, 'UTF-8');
-        $safeThumbnailUrl = htmlspecialchars($thumbnailUrl, ENT_QUOTES, 'UTF-8');
-        $safeMetaTitle = htmlspecialchars($metaTitle, ENT_QUOTES, 'UTF-8');
-        $safeMetaChannel = htmlspecialchars($metaChannel, ENT_QUOTES, 'UTF-8');
-        $safeAvatarLabel = htmlspecialchars($avatarLabel, ENT_QUOTES, 'UTF-8');
+        $safeWatchUrl = $this->esc($watchUrl);
+        $safeThumbnailUrl = $this->esc($thumbnailUrl);
+        $safeMetaTitle = $this->esc($metaTitle);
+        $safeMetaChannel = $this->esc($metaChannel);
+        $safeAvatarLabel = $this->esc($avatarLabel);
 
         if ($thumbnailUrl !== '') {
-            return $this->renderVideoCard(
-                $safeWatchUrl,
-                $safeThumbnailUrl,
-                $safeTitle,
-                $safeMetaTitle,
-                $safeMetaChannel,
-                $safeAvatarLabel
-            );
+            return '<div class="ytgdpr">'
+                . '<a class="ytgdpr-link" href="' . $safeWatchUrl . '" target="_blank" rel="noopener noreferrer nofollow">'
+                . '<img class="ytgdpr-thumb" src="' . $safeThumbnailUrl . '" alt="' . $safeMetaTitle . '" loading="lazy" />'
+                . '<div class="ytgdpr-meta">'
+                . '<span class="ytgdpr-avatar" aria-hidden="true">' . $safeAvatarLabel . '</span>'
+                . '<span class="ytgdpr-meta-text">'
+                . '<span class="ytgdpr-meta-title">' . $safeMetaTitle . '</span>'
+                . '<span class="ytgdpr-meta-channel">' . $safeMetaChannel . '</span>'
+                . '</span>'
+                . '</div>'
+                . '<span class="ytgdpr-play" aria-hidden="true"><span class="ytgdpr-play-triangle"></span></span>'
+                . '<span class="ytgdpr-watch">' . Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_WATCH_CTA') . '</span>'
+                . '</a>'
+                . '</div>';
         }
 
-        return $this->renderPlaceholder($safeWatchUrl, $safeMetaTitle);
-    }
-
-    public function css(): string
-    {
-        return '';
+        return '<div class="ytgdpr">'
+            . '<div class="ytgdpr-placeholder" role="status" aria-live="polite">'
+            . '<span class="ytgdpr-placeholder-text">' . Text::sprintf('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_THUMBNAIL_UNAVAILABLE', $safeMetaTitle) . '</span>'
+            . '<a class="ytgdpr-fallback-link" href="' . $safeWatchUrl . '" target="_blank" rel="noopener noreferrer nofollow">' . Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_PLACEHOLDER_CTA') . '</a>'
+            . '</div>'
+            . '</div>';
     }
 
     public function stylesheets(): array
@@ -82,43 +87,9 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
         ];
     }
 
-    private function renderVideoCard(
-        string $safeWatchUrl,
-        string $safeThumbnailUrl,
-        string $safeTitle,
-        string $safeMetaTitle,
-        string $safeMetaChannel,
-        string $safeAvatarLabel
-    ): string {
-        return '<div class="ytgdpr">'
-            . '<a class="ytgdpr-link" href="' . $safeWatchUrl . '" target="_blank" rel="noopener noreferrer nofollow">'
-            . '<img class="ytgdpr-thumb" src="' . $safeThumbnailUrl . '" alt="' . $safeTitle . '" loading="lazy" />'
-            . '<div class="ytgdpr-meta">'
-            . '<span class="ytgdpr-avatar" aria-hidden="true">' . $safeAvatarLabel . '</span>'
-            . '<span class="ytgdpr-meta-text">'
-            . '<span class="ytgdpr-meta-title">' . $safeMetaTitle . '</span>'
-            . '<span class="ytgdpr-meta-channel">' . $safeMetaChannel . '</span>'
-            . '</span>'
-            . '</div>'
-            . '<span class="ytgdpr-play" aria-hidden="true"><span class="ytgdpr-play-triangle"></span></span>'
-                . '<span class="ytgdpr-watch">' . $this->t('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_WATCH_CTA') . '</span>'
-            . '</a>'
-            . '</div>';
-    }
-
-    private function renderPlaceholder(string $safeWatchUrl, string $safeMetaTitle): string
+    private function esc(string $value): string
     {
-        return '<div class="ytgdpr">'
-            . '<div class="ytgdpr-placeholder" role="status" aria-live="polite">'
-            . '<span class="ytgdpr-placeholder-text">' . Text::sprintf('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_THUMBNAIL_UNAVAILABLE', $safeMetaTitle) . '</span>'
-            . '<a class="ytgdpr-fallback-link" href="' . $safeWatchUrl . '" target="_blank" rel="noopener noreferrer nofollow">' . $this->t('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_PLACEHOLDER_CTA') . '</a>'
-            . '</div>'
-            . '</div>';
-    }
-
-    private function t(string $key): string
-    {
-        return Text::_($key);
+        return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
     }
 
     private function getSetting(string $name, string $default = ''): string
@@ -206,11 +177,6 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
         return rtrim(Uri::root(), '/') . '/cache/ytgdpr_thumbnails';
     }
 
-    private function getMetaCacheFilePath(string $videoId): string
-    {
-        return $this->getCacheFolderPath() . '/meta_' . $videoId . '.json';
-    }
-
     private function getCachedThumbnailUrl(string $videoId): string
     {
         $cachePath = $this->getCacheFolderPath();
@@ -220,7 +186,7 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
         $filePath = $cachePath . '/' . $fileName;
         $fileUrl = $cacheUrl . '/' . rawurlencode($fileName);
 
-        if (!Folder::exists($cachePath) && !Folder::create($cachePath)) {
+        if (!$this->ensureCacheFolder()) {
             return '';
         }
 
@@ -230,11 +196,8 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
             }
         }
 
-        if (File::exists($filePath)) {
-            $modified = @filemtime($filePath);
-            if ($modified && (time() - (int) $modified) < $cacheDuration) {
-                return $fileUrl;
-            }
+        if (File::exists($filePath) && $this->isFresh($filePath, $cacheDuration)) {
+            return $fileUrl;
         }
 
         if (!$this->downloadThumbnailToFile($videoId, $filePath)) {
@@ -260,21 +223,16 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
     private function getCachedVideoMeta(string $videoId): array
     {
         $cacheDuration = $this->getCacheDurationSeconds();
-        $cachePath = $this->getCacheFolderPath();
-        $metaPath = $this->getMetaCacheFilePath($videoId);
+        $metaPath = $this->getCacheFolderPath() . '/meta_' . $videoId . '.json';
 
-        if (!Folder::exists($cachePath) && !Folder::create($cachePath)) {
+        if (!$this->ensureCacheFolder()) {
             return [];
         }
 
-        if (File::exists($metaPath)) {
-            $modified = @filemtime($metaPath);
-            if ($modified && (time() - (int) $modified) < $cacheDuration) {
-                $cachedJson = @file_get_contents($metaPath);
-                $cached = json_decode((string) $cachedJson, true);
-                if (is_array($cached) && !empty($cached['title'])) {
-                    return $cached;
-                }
+        if (File::exists($metaPath) && $this->isFresh($metaPath, $cacheDuration)) {
+            $cached = json_decode((string) @file_get_contents($metaPath), true);
+            if (!empty($cached['title'])) {
+                return is_array($cached) ? $cached : [];
             }
         }
 
@@ -288,11 +246,8 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
         }
 
         if (File::exists($metaPath)) {
-            $cachedJson = @file_get_contents($metaPath);
-            $cached = json_decode((string) $cachedJson, true);
-            if (is_array($cached)) {
-                return $cached;
-            }
+            $cached = json_decode((string) @file_get_contents($metaPath), true);
+            return is_array($cached) ? $cached : [];
         }
 
         return [];
@@ -318,38 +273,28 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
                 return [];
             }
 
-            $normalized = $this->normalizeMetaPayload($payload);
-            if (!empty($normalized['title'])) {
-                return $normalized;
+            $result = [];
+            if (!empty($payload['title'])) {
+                $result['title'] = trim((string) $payload['title']);
+            }
+            if (!empty($payload['author_name'])) {
+                $result['author_name'] = trim((string) $payload['author_name']);
+            }
+            if (!empty($payload['author_url'])) {
+                $result['author_url'] = trim((string) $payload['author_url']);
+            }
+            if (!empty($payload['provider_name'])) {
+                $result['provider_name'] = trim((string) $payload['provider_name']);
+            }
+
+            if (!empty($result['title'])) {
+                return $result;
             }
         } catch (\Throwable $e) {
             return [];
         }
 
         return [];
-    }
-
-    private function normalizeMetaPayload(array $payload): array
-    {
-        $result = [];
-
-        if (!empty($payload['title'])) {
-            $result['title'] = trim((string) $payload['title']);
-        }
-
-        if (!empty($payload['author_name'])) {
-            $result['author_name'] = trim((string) $payload['author_name']);
-        }
-
-        if (!empty($payload['author_url'])) {
-            $result['author_url'] = trim((string) $payload['author_url']);
-        }
-
-        if (!empty($payload['provider_name'])) {
-            $result['provider_name'] = trim((string) $payload['provider_name']);
-        }
-
-        return $result;
     }
 
     private function downloadThumbnailToFile(string $videoId, string $filePath): bool
@@ -446,5 +391,19 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
         $language->load('plg_sppagebuilder_youtube_gdpr', JPATH_ADMINISTRATOR)
             || $language->load('plg_sppagebuilder_youtube_gdpr', JPATH_SITE)
             || $language->load('plg_sppagebuilder_youtube_gdpr', JPATH_PLUGINS . '/sppagebuilder/youtube_gdpr');
+    }
+
+    private function ensureCacheFolder(): bool
+    {
+        $cachePath = $this->getCacheFolderPath();
+
+        return Folder::exists($cachePath) || Folder::create($cachePath);
+    }
+
+    private function isFresh(string $filePath, int $cacheDuration): bool
+    {
+        $modified = @filemtime($filePath);
+
+        return (bool) $modified && (time() - (int) $modified) < $cacheDuration;
     }
 }
