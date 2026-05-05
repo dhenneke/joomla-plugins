@@ -24,12 +24,13 @@ SpAddonsConfig::addonConfig(
                     'type' => 'textarea',
                     'title' => JText::_('COM_SPPAGEBUILDER_ADDON_TITLE'),
                     'desc' => JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_DESC'),
-                    'std' =>  'This is sample title'
+                    'std' => ''
                 ),
                 'youtube_url' => array(
                     'type' => 'text',
                     'title' => 'YouTube Video URL',
-                    'placeholder' => 'https://',
+                    'desc' => 'Paste a YouTube link (watch, short, embed, or youtu.be).',
+                    'placeholder' => 'https://www.youtube.com/watch?v=abcdef12345',
                     'std' => '',
                 ),
 
