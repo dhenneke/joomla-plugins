@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension type="plugin" group="sppagebuilder" method="upgrade">
-    <name>Custom YouTube Plugin</name>
+    <name>PLG_SPPAGEBUILDER_YOUTUBE_GDPR</name>
     <author>Dominik Henneke</author>
     <version>1.0</version>
-    <description>A custom plugin to implement a GDPR-compliant YouTube video placeholder.</description>
+    <description>PLG_SPPAGEBUILDER_YOUTUBE_GDPR_XML_DESCRIPTION</description>
     <files>
         <filename plugin="youtube_gdpr">youtube_gdpr.php</filename>
         <folder>addons</folder>
+        <folder>language</folder>
     </files>
+    <languages folder="language">
+        <language tag="en-GB">en-GB/en-GB.plg_sppagebuilder_youtube_gdpr.ini</language>
+        <language tag="en-GB">en-GB/en-GB.plg_sppagebuilder_youtube_gdpr.sys.ini</language>
+        <language tag="de-DE">de-DE/de-DE.plg_sppagebuilder_youtube_gdpr.ini</language>
+        <language tag="de-DE">de-DE/de-DE.plg_sppagebuilder_youtube_gdpr.sys.ini</language>
+    </languages>
     <config>
         <fields name="params">
             <fieldset name="basic">
-                <field name="cache_duration" type="text" default="3600"
-                    label="Cache Duration (Seconds)"
-                    description="Set the caching duration for thumbnails on the server." />
+                <field name="cache_duration" type="number" default="3600"
+                    label="PLG_SPPAGEBUILDER_YOUTUBE_GDPR_CACHE_DURATION_LABEL"
+                    description="PLG_SPPAGEBUILDER_YOUTUBE_GDPR_CACHE_DURATION_DESC" />
             </fieldset>
         </fields>
     </config>

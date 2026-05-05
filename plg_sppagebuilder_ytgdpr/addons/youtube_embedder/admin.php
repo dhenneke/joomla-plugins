@@ -1,40 +1,46 @@
 <?php
 
-//no direct accees
-defined('_JEXEC') or die('Restricted Aceess');
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
+
+$language = Factory::getApplication()->getLanguage();
+$language->load('plg_sppagebuilder_youtube_gdpr', JPATH_ADMINISTRATOR)
+    || $language->load('plg_sppagebuilder_youtube_gdpr', JPATH_SITE)
+    || $language->load('plg_sppagebuilder_youtube_gdpr', JPATH_PLUGINS . '/sppagebuilder/youtube_gdpr');
 
 SpAddonsConfig::addonConfig(
-    array(
+    [
         'type' => 'content',
         'addon_name' => 'youtube_embedder',
-        'title' => 'YouTube Embedder',
-        'desc' => 'A GDPR-compliant YouTube video embedder for SP Page Builder.',
-        'icon' => JURI::root() . 'plugins/sppagebuilder/ytgdpr/addons/youtube_embedder/assets/images/icon.png',
+        'title' => Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_ADDON_TITLE'),
+        'desc' => Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_ADDON_DESC'),
+        'icon' => Uri::root() . 'plugins/sppagebuilder/youtube_gdpr/addons/youtube_embedder/assets/images/icon.png',
         'category' => 'MyAddons',
-        'attr' => array(
-            'general' => array(
-                'admin_label' => array(
+        'attr' => [
+            'general' => [
+                'admin_label' => [
                     'type' => 'text',
-                    'title' => JText::_('COM_SPPAGEBUILDER_ADDON_ADMIN_LABEL'),
-                    'desc' => JText::_('COM_SPPAGEBUILDER_ADDON_ADMIN_LABEL_DESC'),
-                    'std' => ''
-                ),
-                // Title
-                'title' => array(
-                    'type' => 'textarea',
-                    'title' => JText::_('COM_SPPAGEBUILDER_ADDON_TITLE'),
-                    'desc' => JText::_('COM_SPPAGEBUILDER_ADDON_TITLE_DESC'),
-                    'std' => ''
-                ),
-                'youtube_url' => array(
-                    'type' => 'text',
-                    'title' => 'YouTube Video URL',
-                    'desc' => 'Paste a YouTube link (watch, short, embed, or youtu.be).',
-                    'placeholder' => 'https://www.youtube.com/watch?v=abcdef12345',
+                    'title' => Text::_('COM_SPPAGEBUILDER_ADDON_ADMIN_LABEL'),
+                    'desc' => Text::_('COM_SPPAGEBUILDER_ADDON_ADMIN_LABEL_DESC'),
                     'std' => '',
-                ),
-
-            ),
-        ),
-    )
+                ],
+                'title' => [
+                    'type' => 'textarea',
+                    'title' => Text::_('COM_SPPAGEBUILDER_ADDON_TITLE'),
+                    'desc' => Text::_('COM_SPPAGEBUILDER_ADDON_TITLE_DESC'),
+                    'std' => '',
+                ],
+                'youtube_url' => [
+                    'type' => 'text',
+                    'title' => Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_FIELD_YOUTUBE_URL_LABEL'),
+                    'desc' => Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_FIELD_YOUTUBE_URL_DESC'),
+                    'placeholder' => Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_FIELD_YOUTUBE_URL_PLACEHOLDER'),
+                    'std' => '',
+                ],
+            ],
+        ],
+    ]
 );
