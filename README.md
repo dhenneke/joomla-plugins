@@ -8,6 +8,12 @@ This repository contains multiple custom Joomla plugins for SP Page Builder.
    - GDPR-friendly YouTube thumbnail/link addon
    - README: `plg_sppagebuilder_ytgdpr/README.md`
 
+- `plg_sppagebuilder_contactform`
+   - Plain contact form addon (name, email, subject, message)
+   - Uses Joomla captcha plugins through official captcha API
+   - Includes basic anti-abuse hardening (signed payload validation + IP rate limiting)
+   - README: `plg_sppagebuilder_contactform/README.md`
+
 ## Build
 
 Run from repository root:

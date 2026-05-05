@@ -1,0 +1,56 @@
+.sppb-contact-form-wrap {
+    max-width: 720px;
+}
+
+.sppb-contact-form-title {
+    margin: 0 0 1rem;
+}
+
+.sppb-contact-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.sppb-contact-form-feedback {
+    margin: 0 0 1rem;
+    border-radius: 6px;
+    padding: 0.7rem 0.9rem;
+}
+
+.sppb-contact-form-feedback-success {
+    border: 1px solid #8fce8f;
+    background: #eef8ee;
+    color: #245824;
+}
+
+.sppb-contact-form-feedback-error {
+    border: 1px solid #e2a2a2;
+    background: #fff0f0;
+    color: #7a1f1f;
+}
+
+.sppb-contact-form-row {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.sppb-contact-form-row label {
+    font-weight: 600;
+}
+
+.sppb-contact-form-row input,
+.sppb-contact-form-row textarea {
+    width: 100%;
+    border: 1px solid #c7c7c7;
+    border-radius: 6px;
+    padding: 0.65rem 0.8rem;
+    background: #fff;
+}
+
+.sppb-contact-form-row textarea {
+    resize: vertical;
+}
+
+.sppb-contact-form-captcha-wrap {
+    overflow-x: auto;
+}
