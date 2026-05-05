@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+    <!-- Red background -->
+    <rect width="48" height="48" rx="10" ry="10" fill="#FF0000" />
+    <!-- Play triangle, shifted slightly up-left to make room for badge -->
+    <polygon points="15,11 15,30 31,20.5" fill="#FFFFFF" />
+    <!-- Green shield badge (bottom-right) -->
+    <path d="M27,27 Q27,26 36,24 Q45,26 45,27 L45,34 Q45,41 36,44.5 Q27,41 27,34 Z" fill="#2E7D32"
+        stroke="#FFFFFF" stroke-width="1.2" />
+    <!-- White checkmark inside shield -->
+    <path d="M31,34 L34.5,37.5 L41,30" stroke="#FFFFFF" stroke-width="2.2" fill="none"
+        stroke-linecap="round" stroke-linejoin="round" />
+</svg>

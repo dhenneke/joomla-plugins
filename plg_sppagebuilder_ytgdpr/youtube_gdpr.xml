@@ -2,6 +2,8 @@
 <extension type="plugin" group="sppagebuilder" method="upgrade">
     <name>PLG_SPPAGEBUILDER_YOUTUBE_GDPR</name>
     <author>Dominik Henneke</author>
+    <creationDate>May 2026</creationDate>
+    <license>GNU General Public License version 2 or later</license>
     <version>1.0</version>
     <description>PLG_SPPAGEBUILDER_YOUTUBE_GDPR_XML_DESCRIPTION</description>
     <files>

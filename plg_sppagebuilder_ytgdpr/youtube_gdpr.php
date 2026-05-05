@@ -6,8 +6,9 @@
 
 defined('_JEXEC') or die;
 
-// Your main plugin class
-class PlgSppagebuilderYoutubeGdpr extends JPlugin
+use Joomla\CMS\Plugin\CMSPlugin;
+
+class PlgSppagebuilderYoutubeGdpr extends CMSPlugin
 {
     protected $autoloadLanguage = true;
 }

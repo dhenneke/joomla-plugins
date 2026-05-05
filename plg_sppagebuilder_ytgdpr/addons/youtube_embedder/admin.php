@@ -17,7 +17,7 @@ SpAddonsConfig::addonConfig(
         'addon_name' => 'youtube_embedder',
         'title' => Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_ADDON_TITLE'),
         'desc' => Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_ADDON_DESC'),
-        'icon' => Uri::root() . 'plugins/sppagebuilder/youtube_gdpr/addons/youtube_embedder/assets/images/icon.png',
+        'icon' => Uri::root() . 'plugins/sppagebuilder/youtube_gdpr/addons/youtube_embedder/assets/images/icon.svg',
         'category' => 'MyAddons',
         'attr' => [
             'general' => [
