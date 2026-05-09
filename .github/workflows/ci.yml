@@ -13,7 +13,7 @@ jobs:
       JOOMLA_VERSION: 5.4.5
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -22,7 +22,7 @@ jobs:
           tools: composer:v2
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: vendor
           key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
@@ -31,7 +31,7 @@ jobs:
 
       - name: Cache Joomla installation
         id: cache-joomla
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .joomla
           key: ${{ runner.os }}-joomla-${{ env.JOOMLA_VERSION }}
