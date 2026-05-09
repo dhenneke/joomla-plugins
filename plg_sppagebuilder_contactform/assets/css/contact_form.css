@@ -38,7 +38,7 @@
     font-weight: 600;
 }
 
-.sppb-contact-form-row input,
+.sppb-contact-form-row input:not([type="checkbox"]),
 .sppb-contact-form-row textarea {
     width: 100%;
     border: 1px solid #c7c7c7;
@@ -53,4 +53,29 @@
 
 .sppb-contact-form-captcha-wrap {
     overflow-x: auto;
+}
+
+.sppb-contact-form-row-consent {
+    gap: 0;
+}
+
+.sppb-contact-form-consent-label {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    font-weight: 400;
+}
+
+.sppb-contact-form-consent-label input[type="checkbox"] {
+    margin-top: 0.2rem;
+    flex: 0 0 auto;
+}
+
+.sppb-contact-form-consent-label span {
+    display: inline;
+    line-height: 1.5;
+}
+
+.sppb-contact-form-consent-label strong {
+    font-weight: 600;
 }

@@ -23,6 +23,9 @@ defined('_JEXEC') or die;
  *     emailValue?: string,
  *     subjectValue?: string,
  *     messageValue?: string,
+ *     privacyConsentRequired?: bool,
+ *     privacyConsentChecked?: bool,
+ *     privacyConsentHtml?: string,
  *     captchaHtml?: string,
  *     submitMarkerName?: string,
  *     addonId?: int,
@@ -45,6 +48,9 @@ $nameValue = $data['nameValue'] ?? '';
 $emailValue = $data['emailValue'] ?? '';
 $subjectValue = $data['subjectValue'] ?? '';
 $messageValue = $data['messageValue'] ?? '';
+$privacyConsentRequired = !empty($data['privacyConsentRequired']);
+$privacyConsentChecked = !empty($data['privacyConsentChecked']);
+$privacyConsentHtml = $data['privacyConsentHtml'] ?? '';
 $captchaHtml = $data['captchaHtml'] ?? '';
 $submitMarkerName = $data['submitMarkerName'] ?? 'cf_submit';
 $addonId = $data['addonId'] ?? 0;
@@ -86,6 +92,26 @@ $feedbackText = $data['feedbackText'] ?? '';
                 <label for="<?php echo $formId; ?>-message"><?php echo $messageLabel; ?></label>
                 <textarea id="<?php echo $formId; ?>-message" name="cf_message" rows="6" required><?php echo $messageValue; ?></textarea>
             </div>
+
+            <?php if ($privacyConsentRequired) : ?>
+                <div class="sppb-contact-form-row sppb-contact-form-row-consent">
+                    <label class="sppb-contact-form-consent-label" for="<?php echo $formId; ?>-privacy">
+                        <input
+                            id="<?php echo $formId; ?>-privacy"
+                            name="cf_privacy_consent"
+                            type="checkbox"
+                            value="1"
+                            <?php echo $privacyConsentChecked ? 'checked' : ''; ?>
+                            required
+                        >
+                        <span>
+                            <?php if ($privacyConsentHtml !== '') : ?>
+                                <?php echo $privacyConsentHtml; ?>
+                            <?php endif; ?>
+                        </span>
+                    </label>
+                </div>
+            <?php endif; ?>
 
             <?php if ($captchaHtml !== '') : ?>
                 <div class="sppb-contact-form-row sppb-contact-form-captcha-wrap">

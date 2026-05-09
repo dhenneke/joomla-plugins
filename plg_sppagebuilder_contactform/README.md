@@ -7,6 +7,7 @@ This extension is a third-party addon and is not affiliated with or endorsed by 
 ## Features
 
 - Fields: name, email, subject, message
+- Optional required privacy policy consent checkbox with editor-based text so links can be embedded directly per addon instance
 - Supports Joomla default captcha plugin (for example reCAPTCHA, hCaptcha, and compatible captcha plugins)
 - Server-side validation and mail dispatch through Joomla Mailer
 - Stateless signed form state token (HMAC + expiry) to reduce form tampering
@@ -37,6 +38,8 @@ This extension is a third-party addon and is not affiliated with or endorsed by 
 ## Addon Configuration
 
 - Recipient Email: target mailbox for this form instance
+- Require Privacy Policy Consent: toggle a required consent checkbox per form instance
+- Privacy Consent Text: editor field for the checkbox copy, including optional embedded links
 - Enable Captcha: toggle captcha per form instance
 - Captcha Type: choose default (global Joomla captcha) or a specific installed captcha plugin
 

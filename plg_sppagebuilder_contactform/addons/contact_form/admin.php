@@ -60,6 +60,19 @@ SpAddonsConfig::addonConfig(
                     'desc' => Text::_('PLG_SPPAGEBUILDER_CONTACTFORM_FIELD_ENABLE_CAPTCHA_DESC'),
                     'std' => 1,
                 ],
+                'require_privacy_consent' => [
+                    'type' => 'checkbox',
+                    'title' => Text::_('PLG_SPPAGEBUILDER_CONTACTFORM_FIELD_REQUIRE_PRIVACY_CONSENT_LABEL'),
+                    'desc' => Text::_('PLG_SPPAGEBUILDER_CONTACTFORM_FIELD_REQUIRE_PRIVACY_CONSENT_DESC'),
+                    'std' => 0,
+                ],
+                'privacy_consent_html' => [
+                    'type' => 'editor',
+                    'title' => Text::_('PLG_SPPAGEBUILDER_CONTACTFORM_FIELD_PRIVACY_CONSENT_HTML_LABEL'),
+                    'desc' => Text::_('PLG_SPPAGEBUILDER_CONTACTFORM_FIELD_PRIVACY_CONSENT_HTML_DESC'),
+                    'std' => '',
+                    'depends' => [['require_privacy_consent', '=', 1]],
+                ],
                 'captcha_type' => [
                     'type' => 'plugin',
                     'plugin_type' => 'captcha',

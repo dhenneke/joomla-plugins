@@ -17,6 +17,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Filter\InputFilter;
 
 class SppagebuilderAddonContact_form extends SppagebuilderAddons
 {
@@ -27,12 +28,13 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
     private const MAX_SUBJECT_LENGTH = 180;
     private const MAX_MESSAGE_LENGTH = 5000;
 
-    /** @var array{name: string, email: string, subject: string, message: string} */
+    /** @var array{name: string, email: string, subject: string, message: string, privacy: string} */
     private array $failedInput = [
         'name' => '',
         'email' => '',
         'subject' => '',
         'message' => '',
+        'privacy' => '0',
     ];
 
     private string $inlineFeedbackType = '';
@@ -47,13 +49,23 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
         $recipientEmail = trim((string) $this->getSetting('recipient_email', ''));
         $captchaEnabled = $this->isCaptchaEnabled();
         $captchaPlugin = $this->resolveCaptchaPlugin();
+        $privacyConsentRequired = $this->isPrivacyConsentRequired();
+        $privacyConsentHtml = $this->resolvePrivacyConsentHtml();
 
         $addonId = isset($this->addon->id) ? (int) $this->addon->id : random_int(1000, 9999);
         $formId = 'sppb-contact-form-' . $addonId;
         $captchaFieldName = 'cf_captcha_' . $addonId;
         $returnUrl = Uri::getInstance()->toString(['path', 'query']);
 
-        $this->handleSubmitIfTargeted($addonId, $captchaFieldName, $recipientEmail, $captchaEnabled, $captchaPlugin, $returnUrl);
+        $this->handleSubmitIfTargeted(
+            $addonId,
+            $captchaFieldName,
+            $recipientEmail,
+            $captchaEnabled,
+            $captchaPlugin,
+            $privacyConsentRequired,
+            $returnUrl
+        );
 
         $stateToken = $this->createStateToken($addonId, $returnUrl);
         if ($stateToken === '') {
@@ -79,6 +91,9 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
             'emailValue' => $this->esc($this->failedInput['email']),
             'subjectValue' => $this->esc($this->failedInput['subject']),
             'messageValue' => $this->esc($this->failedInput['message']),
+            'privacyConsentRequired' => $privacyConsentRequired,
+            'privacyConsentChecked' => $this->failedInput['privacy'] === '1',
+            'privacyConsentHtml' => $privacyConsentHtml,
             'nameLabel' => Text::_('PLG_SPPAGEBUILDER_CONTACTFORM_FIELD_NAME_LABEL'),
             'emailLabel' => Text::_('PLG_SPPAGEBUILDER_CONTACTFORM_FIELD_EMAIL_LABEL'),
             'subjectLabel' => Text::_('PLG_SPPAGEBUILDER_CONTACTFORM_FIELD_SUBJECT_LABEL'),
@@ -128,6 +143,18 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
         return (int) $this->getSetting('enable_captcha', '1') === 1;
     }
 
+    private function isPrivacyConsentRequired(): bool
+    {
+        return (int) $this->getSetting('require_privacy_consent', '0') === 1;
+    }
+
+    private function resolvePrivacyConsentHtml(): string
+    {
+        $configuredHtml = trim((string) $this->getSetting('privacy_consent_html', ''));
+
+        return $this->sanitizePrivacyConsentHtml($configuredHtml);
+    }
+
     private function resolveCaptchaPlugin(): string
     {
         $configured = trim((string) $this->getSetting('captcha_type', 'default'));
@@ -166,7 +193,15 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
         return (string) ob_get_clean();
     }
 
-    private function handleSubmitIfTargeted(int $addonId, string $captchaFieldName, string $recipientEmail, bool $captchaEnabled, string $captchaPlugin, string $defaultReturnUrl): void
+    private function handleSubmitIfTargeted(
+        int $addonId,
+        string $captchaFieldName,
+        string $recipientEmail,
+        bool $captchaEnabled,
+        string $captchaPlugin,
+        bool $privacyConsentRequired,
+        string $defaultReturnUrl
+    ): void
     {
         /** @var CMSApplication $app */
         $app = Factory::getApplication();
@@ -189,11 +224,12 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
         $email = trim($input->post->getString('cf_email', ''));
         $subject = trim($input->post->getString('cf_subject', ''));
         $message = trim($input->post->getString('cf_message', ''));
+        $privacyConsent = $input->post->getInt('cf_privacy_consent', 0) === 1;
 
         $state = $this->verifyStateToken($input->post->getString('cf_state', ''), $addonId);
         if ($state === null) {
             $this->logSecurityEvent('Rejected submission due to invalid state token.', Log::WARNING, ['addon_id' => $addonId]);
-            $this->setFailedSubmission('PLG_SPPAGEBUILDER_CONTACTFORM_ERROR_INVALID_SUBMISSION', $name, $email, $subject, $message);
+            $this->setFailedSubmission('PLG_SPPAGEBUILDER_CONTACTFORM_ERROR_INVALID_SUBMISSION', $name, $email, $subject, $message, $privacyConsent);
             return;
         }
 
@@ -205,27 +241,27 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
 
         if (!$this->checkSameOriginRequest()) {
             $this->logSecurityEvent('Rejected submission due to same-origin validation failure.', Log::WARNING, ['addon_id' => $addonId]);
-            $this->setFailedSubmission('PLG_SPPAGEBUILDER_CONTACTFORM_ERROR_INVALID_SUBMISSION', $name, $email, $subject, $message);
+            $this->setFailedSubmission('PLG_SPPAGEBUILDER_CONTACTFORM_ERROR_INVALID_SUBMISSION', $name, $email, $subject, $message, $privacyConsent);
             return;
         }
 
-        $validationErrorKey = $this->validateSubmissionFields($name, $email, $subject, $message);
+        $validationErrorKey = $this->validateSubmissionFields($name, $email, $subject, $message, $privacyConsentRequired, $privacyConsent);
         if ($validationErrorKey !== null) {
             $this->logSecurityEvent('Rejected submission due to field validation failure.', Log::NOTICE, ['addon_id' => $addonId]);
-            $this->setFailedSubmission($validationErrorKey, $name, $email, $subject, $message);
+            $this->setFailedSubmission($validationErrorKey, $name, $email, $subject, $message, $privacyConsent);
             return;
         }
 
         if (!$this->validateCaptcha($captchaFieldName, $captchaEnabled, $captchaPlugin)) {
             $this->logSecurityEvent('Rejected submission due to captcha validation failure.', Log::NOTICE, ['addon_id' => $addonId]);
-            $this->setFailedSubmission('PLG_SPPAGEBUILDER_CONTACTFORM_ERROR_CAPTCHA', $name, $email, $subject, $message);
+            $this->setFailedSubmission('PLG_SPPAGEBUILDER_CONTACTFORM_ERROR_CAPTCHA', $name, $email, $subject, $message, $privacyConsent);
             return;
         }
 
         $resolvedRecipient = $recipientEmail;
         if (!$this->isValidEmail($resolvedRecipient)) {
             $this->logSecurityEvent('Rejected submission due to invalid recipient configuration.', Log::ERROR, ['addon_id' => $addonId]);
-            $this->setFailedSubmission('PLG_SPPAGEBUILDER_CONTACTFORM_ERROR_RECIPIENT', $name, $email, $subject, $message);
+            $this->setFailedSubmission('PLG_SPPAGEBUILDER_CONTACTFORM_ERROR_RECIPIENT', $name, $email, $subject, $message, $privacyConsent);
             return;
         }
 
@@ -256,7 +292,7 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
                 'addon_id' => $addonId,
                 'error' => $exception->getMessage(),
             ]);
-            $this->setFailedSubmission('PLG_SPPAGEBUILDER_CONTACTFORM_ERROR_SEND', $name, $email, $subject, $message);
+            $this->setFailedSubmission('PLG_SPPAGEBUILDER_CONTACTFORM_ERROR_SEND', $name, $email, $subject, $message, $privacyConsent);
             return;
         }
 
@@ -286,7 +322,14 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
         }
     }
 
-    private function validateSubmissionFields(string $name, string $email, string $subject, string $message): ?string
+    private function validateSubmissionFields(
+        string $name,
+        string $email,
+        string $subject,
+        string $message,
+        bool $privacyConsentRequired,
+        bool $privacyConsentAccepted
+    ): ?string
     {
         if ($name === '' || $email === '' || $subject === '' || $message === '') {
             return 'PLG_SPPAGEBUILDER_CONTACTFORM_ERROR_REQUIRED_FIELDS';
@@ -303,6 +346,10 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
 
         if (!$this->isValidEmail($email)) {
             return 'PLG_SPPAGEBUILDER_CONTACTFORM_ERROR_INVALID_EMAIL';
+        }
+
+        if ($privacyConsentRequired && !$privacyConsentAccepted) {
+            return 'PLG_SPPAGEBUILDER_CONTACTFORM_ERROR_PRIVACY_CONSENT_REQUIRED';
         }
 
         return null;
@@ -358,20 +405,22 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
             'email' => '',
             'subject' => '',
             'message' => '',
+            'privacy' => '0',
         ]);
     }
 
-    private function setFailedSubmission(string $messageKey, string $name, string $email, string $subject, string $message): void
+    private function setFailedSubmission(string $messageKey, string $name, string $email, string $subject, string $message, bool $privacyConsentAccepted): void
     {
         $this->setSubmissionFeedback('error', $messageKey, [
             'name' => $name,
             'email' => $email,
             'subject' => $subject,
             'message' => $message,
+            'privacy' => $privacyConsentAccepted ? '1' : '0',
         ]);
     }
 
-    /** @param array{name?: string, email?: string, subject?: string, message?: string} $inputValues */
+    /** @param array{name?: string, email?: string, subject?: string, message?: string, privacy?: string} $inputValues */
     private function setSubmissionFeedback(string $type, string $messageKey, array $inputValues): void
     {
         $this->failedInput = [
@@ -379,9 +428,23 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
             'email' => (string) ($inputValues['email'] ?? ''),
             'subject' => (string) ($inputValues['subject'] ?? ''),
             'message' => (string) ($inputValues['message'] ?? ''),
+            'privacy' => (string) ($inputValues['privacy'] ?? '0'),
         ];
         $this->inlineFeedbackType = $type;
         $this->inlineFeedbackText = Text::_($messageKey);
+    }
+
+    private function sanitizePrivacyConsentHtml(string $html): string
+    {
+        $filter = new InputFilter(
+            ['a', 'abbr', 'b', 'br', 'code', 'em', 'i', 'small', 'span', 'strong', 'u'],
+            ['href', 'rel', 'target', 'title'],
+            InputFilter::ONLY_ALLOW_DEFINED_TAGS,
+            InputFilter::ONLY_ALLOW_DEFINED_ATTRIBUTES,
+            1
+        );
+
+        return trim($this->normalizeStringValue($filter->clean($html, 'html')));
     }
 
     private function createStateToken(int $addonId, string $returnUrl): string
