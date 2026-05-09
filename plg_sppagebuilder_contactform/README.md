@@ -54,6 +54,7 @@ This extension is a third-party addon and is not affiliated with or endorsed by 
 - Captcha rendering uses Joomla's configured default captcha plugin from Global Configuration.
 - If no captcha plugin is configured and captcha is required, submission fails.
 - Form feedback is returned via redirect query parameters and rendered inline.
+- Field placeholders mirror the configured field labels.
 
 ## License
 

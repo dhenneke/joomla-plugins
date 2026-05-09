@@ -69,22 +69,22 @@ $feedbackText = $data['feedbackText'] ?? '';
         <form id="<?php echo $formId; ?>" class="sppb-contact-form" action="<?php echo $actionUrl; ?>" method="post">
             <div class="sppb-contact-form-row">
                 <label for="<?php echo $formId; ?>-name"><?php echo $nameLabel; ?></label>
-                <input id="<?php echo $formId; ?>-name" name="cf_name" type="text" value="<?php echo $nameValue; ?>" required>
+                <input id="<?php echo $formId; ?>-name" name="cf_name" type="text" value="<?php echo $nameValue; ?>" placeholder="<?php echo $nameLabel; ?>" required>
             </div>
 
             <div class="sppb-contact-form-row">
                 <label for="<?php echo $formId; ?>-email"><?php echo $emailLabel; ?></label>
-                <input id="<?php echo $formId; ?>-email" name="cf_email" type="email" value="<?php echo $emailValue; ?>" required>
+                <input id="<?php echo $formId; ?>-email" name="cf_email" type="email" value="<?php echo $emailValue; ?>" placeholder="<?php echo $emailLabel; ?>" required>
             </div>
 
             <div class="sppb-contact-form-row">
                 <label for="<?php echo $formId; ?>-subject"><?php echo $subjectLabel; ?></label>
-                <input id="<?php echo $formId; ?>-subject" name="cf_subject" type="text" value="<?php echo $subjectValue; ?>" required>
+                <input id="<?php echo $formId; ?>-subject" name="cf_subject" type="text" value="<?php echo $subjectValue; ?>" placeholder="<?php echo $subjectLabel; ?>" required>
             </div>
 
             <div class="sppb-contact-form-row">
                 <label for="<?php echo $formId; ?>-message"><?php echo $messageLabel; ?></label>
-                <textarea id="<?php echo $formId; ?>-message" name="cf_message" rows="6" required><?php echo $messageValue; ?></textarea>
+                <textarea id="<?php echo $formId; ?>-message" name="cf_message" rows="6" placeholder="<?php echo $messageLabel; ?>" required><?php echo $messageValue; ?></textarea>
             </div>
 
             <?php if ($privacyConsentRequired) : ?>

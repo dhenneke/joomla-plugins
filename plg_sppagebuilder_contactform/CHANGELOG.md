@@ -7,6 +7,7 @@ The plugin version in `contactform.xml` should always match the latest released 
 ## Unreleased
 
 - Remove the optional form title field and render the addon without a heading.
+- Add placeholders for the name, email, subject, and message fields based on their labels.
 
 ## 1.1.0
 
