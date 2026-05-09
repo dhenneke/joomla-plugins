@@ -11,8 +11,8 @@ if ! command -v zip >/dev/null 2>&1; then
 	exit 1
 fi
 
-rm -rf out
 mkdir -p out
+rm -rf out/*
 
 yt_version=$(sed -n 's:.*<version>\(.*\)</version>.*:\1:p' plg_sppagebuilder_ytgdpr/youtube_gdpr.xml | head -n 1)
 contact_version=$(sed -n 's:.*<version>\(.*\)</version>.*:\1:p' plg_sppagebuilder_contactform/contactform.xml | head -n 1)
