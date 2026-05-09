@@ -247,7 +247,7 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
 
             $result = $mailer->send();
             if ($result !== true) {
-                $errorInfo = property_exists($mailer, 'ErrorInfo') ? trim((string) $mailer->ErrorInfo) : '';
+                $errorInfo = trim((string) $mailer->ErrorInfo);
                 $detail = $errorInfo !== '' ? $errorInfo : 'Unknown mailer error';
                 throw new RuntimeException('Failed to send message: ' . $detail);
             }
@@ -444,16 +444,22 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
             return null;
         }
 
-        $tokenAddonId = (int) ($payload['addon_id'] ?? 0);
-        $issuedAt = (int) ($payload['iat'] ?? 0);
-        $expiresAt = (int) ($payload['exp'] ?? 0);
+        $tokenAddonId = is_int($payload['addon_id'] ?? null) ? $payload['addon_id'] : 0;
+        $issuedAt = is_int($payload['iat'] ?? null) ? $payload['iat'] : 0;
+        $expiresAt = is_int($payload['exp'] ?? null) ? $payload['exp'] : 0;
+        $returnUrl = is_string($payload['return_url'] ?? null) ? $payload['return_url'] : '';
         $now = time();
 
         if ($tokenAddonId !== $expectedAddonId || $issuedAt <= 0 || $expiresAt <= $issuedAt || $expiresAt < $now) {
             return null;
         }
 
-        return $payload;
+        return [
+            'addon_id' => $tokenAddonId,
+            'return_url' => $returnUrl,
+            'iat' => $issuedAt,
+            'exp' => $expiresAt,
+        ];
     }
 
     private function getSigningKey(): ?string

@@ -22,12 +22,21 @@ use Joomla\CMS\Language\Text;
  * @var string $avatarLabel First letter of channel name
  */
 
+/**
+ * @var array{
+ *     watchUrl?: string,
+ *     thumbnailUrl?: string,
+ *     title?: string,
+ *     channel?: string,
+ *     avatarLabel?: string
+ * } $data
+ */
 $data = (isset($displayData) && is_array($displayData)) ? $displayData : [];
-$watchUrl = (string) ($data['watchUrl'] ?? '');
-$thumbnailUrl = (string) ($data['thumbnailUrl'] ?? '');
-$title = (string) ($data['title'] ?? '');
-$channel = (string) ($data['channel'] ?? '');
-$avatarLabel = (string) ($data['avatarLabel'] ?? '');
+$watchUrl = $data['watchUrl'] ?? '';
+$thumbnailUrl = $data['thumbnailUrl'] ?? '';
+$title = $data['title'] ?? '';
+$channel = $data['channel'] ?? '';
+$avatarLabel = $data['avatarLabel'] ?? '';
 ?>
 <div class="ytgdpr">
     <a class="ytgdpr-link" href="<?= $watchUrl ?>" target="_blank" rel="noopener noreferrer nofollow">

@@ -124,7 +124,7 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
 
         if ($host === 'youtu.be') {
             $segments = explode('/', $path);
-            $candidate = isset($segments[0]) ? $segments[0] : '';
+            $candidate = $segments[0];
             return preg_match('/^[a-zA-Z0-9_-]{11}$/', $candidate) ? $candidate : '';
         }
 
@@ -236,8 +236,9 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
 
         if (File::exists($metaPath) && $this->isFresh($metaPath, $cacheDuration)) {
             $cached = json_decode((string) @file_get_contents($metaPath), true);
-            if (is_array($cached) && !empty($cached['title'])) {
-                return $cached;
+            $normalized = $this->normalizeVideoMeta($cached);
+            if (!empty($normalized['title'])) {
+                return $normalized;
             }
         }
 
@@ -252,7 +253,7 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
 
         if (File::exists($metaPath)) {
             $cached = json_decode((string) @file_get_contents($metaPath), true);
-            return is_array($cached) ? $cached : [];
+            return $this->normalizeVideoMeta($cached);
         }
 
         return [];
@@ -280,17 +281,29 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
             }
 
             $result = [];
-            if (!empty($payload['title'])) {
-                $result['title'] = trim((string) $payload['title']);
+            if (is_string($payload['title'] ?? null)) {
+                $title = trim($payload['title']);
+                if ($title !== '') {
+                    $result['title'] = $title;
+                }
             }
-            if (!empty($payload['author_name'])) {
-                $result['author_name'] = trim((string) $payload['author_name']);
+            if (is_string($payload['author_name'] ?? null)) {
+                $authorName = trim($payload['author_name']);
+                if ($authorName !== '') {
+                    $result['author_name'] = $authorName;
+                }
             }
-            if (!empty($payload['author_url'])) {
-                $result['author_url'] = trim((string) $payload['author_url']);
+            if (is_string($payload['author_url'] ?? null)) {
+                $authorUrl = trim($payload['author_url']);
+                if ($authorUrl !== '') {
+                    $result['author_url'] = $authorUrl;
+                }
             }
-            if (!empty($payload['provider_name'])) {
-                $result['provider_name'] = trim((string) $payload['provider_name']);
+            if (is_string($payload['provider_name'] ?? null)) {
+                $providerName = trim($payload['provider_name']);
+                if ($providerName !== '') {
+                    $result['provider_name'] = $providerName;
+                }
             }
 
             if (!empty($result['title'])) {
@@ -364,7 +377,7 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
         $headers = $response->getHeaders();
         if (isset($headers['Content-Type'])) {
             $headerValue = $headers['Content-Type'];
-            if (is_array($headerValue) && isset($headerValue[0])) {
+            if ($headerValue !== []) {
                 $contentType = $headerValue[0];
             }
         }
@@ -388,6 +401,28 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
         }
 
         return $this->httpClient;
+    }
+
+    /** @return array<string, string> */
+    private function normalizeVideoMeta(mixed $value): array
+    {
+        if (!is_array($value)) {
+            return [];
+        }
+
+        $result = [];
+        foreach (['title', 'author_name', 'author_url', 'provider_name'] as $key) {
+            if (!is_string($value[$key] ?? null)) {
+                continue;
+            }
+
+            $normalized = trim($value[$key]);
+            if ($normalized !== '') {
+                $result[$key] = $normalized;
+            }
+        }
+
+        return $result;
     }
 
     private function loadPluginLanguage(): void

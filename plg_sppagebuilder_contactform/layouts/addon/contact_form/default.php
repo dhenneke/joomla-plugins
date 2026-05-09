@@ -10,27 +10,49 @@
 
 defined('_JEXEC') or die;
 
+/**
+ * @var array{
+ *     formId?: string,
+ *     formTitle?: string,
+ *     actionUrl?: string,
+ *     nameLabel?: string,
+ *     emailLabel?: string,
+ *     subjectLabel?: string,
+ *     messageLabel?: string,
+ *     nameValue?: string,
+ *     emailValue?: string,
+ *     subjectValue?: string,
+ *     messageValue?: string,
+ *     captchaHtml?: string,
+ *     submitMarkerName?: string,
+ *     addonId?: int,
+ *     returnUrl?: string,
+ *     stateToken?: string,
+ *     submitLabel?: string,
+ *     feedbackType?: string,
+ *     feedbackText?: string
+ * } $data
+ */
 $data = (isset($displayData) && is_array($displayData)) ? $displayData : [];
-
-$formId = (string) ($data['formId'] ?? '');
-$formTitle = (string) ($data['formTitle'] ?? '');
-$actionUrl = (string) ($data['actionUrl'] ?? '');
-$nameLabel = (string) ($data['nameLabel'] ?? '');
-$emailLabel = (string) ($data['emailLabel'] ?? '');
-$subjectLabel = (string) ($data['subjectLabel'] ?? '');
-$messageLabel = (string) ($data['messageLabel'] ?? '');
-$nameValue = (string) ($data['nameValue'] ?? '');
-$emailValue = (string) ($data['emailValue'] ?? '');
-$subjectValue = (string) ($data['subjectValue'] ?? '');
-$messageValue = (string) ($data['messageValue'] ?? '');
-$captchaHtml = (string) ($data['captchaHtml'] ?? '');
-$submitMarkerName = (string) ($data['submitMarkerName'] ?? 'cf_submit');
-$addonId = (int) ($data['addonId'] ?? 0);
-$returnUrl = (string) ($data['returnUrl'] ?? '');
-$stateToken = (string) ($data['stateToken'] ?? '');
-$submitLabel = (string) ($data['submitLabel'] ?? '');
-$feedbackType = (string) ($data['feedbackType'] ?? '');
-$feedbackText = (string) ($data['feedbackText'] ?? '');
+$formId = $data['formId'] ?? '';
+$formTitle = $data['formTitle'] ?? '';
+$actionUrl = $data['actionUrl'] ?? '';
+$nameLabel = $data['nameLabel'] ?? '';
+$emailLabel = $data['emailLabel'] ?? '';
+$subjectLabel = $data['subjectLabel'] ?? '';
+$messageLabel = $data['messageLabel'] ?? '';
+$nameValue = $data['nameValue'] ?? '';
+$emailValue = $data['emailValue'] ?? '';
+$subjectValue = $data['subjectValue'] ?? '';
+$messageValue = $data['messageValue'] ?? '';
+$captchaHtml = $data['captchaHtml'] ?? '';
+$submitMarkerName = $data['submitMarkerName'] ?? 'cf_submit';
+$addonId = $data['addonId'] ?? 0;
+$returnUrl = $data['returnUrl'] ?? '';
+$stateToken = $data['stateToken'] ?? '';
+$submitLabel = $data['submitLabel'] ?? '';
+$feedbackType = $data['feedbackType'] ?? '';
+$feedbackText = $data['feedbackText'] ?? '';
 ?>
 <div class="sppb-contact-form-wrap">
     <?php if ($formTitle !== '') : ?>
