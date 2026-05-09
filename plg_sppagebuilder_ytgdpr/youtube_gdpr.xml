@@ -6,7 +6,7 @@
     <copyright>(C) 2026 Dominik Henneke</copyright>
     <creationDate>May 2026</creationDate>
     <license>GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html</license>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <description>PLG_SPPAGEBUILDER_YOUTUBE_GDPR_XML_DESCRIPTION</description>
     <files>
         <filename plugin="youtube_gdpr">youtube_gdpr.php</filename>
