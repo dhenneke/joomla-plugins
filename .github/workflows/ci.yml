@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    env:
+      JOOMLA_VERSION: 5.4.5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Cache Joomla installation
+        id: cache-joomla
+        uses: actions/cache@v4
+        with:
+          path: .joomla
+          key: ${{ runner.os }}-joomla-${{ env.JOOMLA_VERSION }}
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Download Joomla
+        if: steps.cache-joomla.outputs.cache-hit != 'true'
+        run: |
+          joomla_download_url="https://github.com/joomla/joomla-cms/releases/download/${JOOMLA_VERSION}/Joomla_${JOOMLA_VERSION}-Stable-Full_Package.tar.gz"
+          curl -L --fail --output joomla.tar.gz "$joomla_download_url"
+
+      - name: Extract Joomla
+        if: steps.cache-joomla.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p .joomla
+          tar -xzf joomla.tar.gz -C .joomla
+
+      # SP Page Builder is a paid dependency, so CI does not install it.
+      # phpstan-bootstrap.php falls back to minimal local types when .sppagebuilder is absent.
+      - name: Run linter
+        run: composer lint

@@ -1,0 +1,10 @@
+parameters:
+    level: 9
+    paths:
+        - plg_sppagebuilder_contactform
+        - plg_sppagebuilder_ytgdpr
+    tmpDir: .phpstan
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+    scanDirectories:
+        - vendor

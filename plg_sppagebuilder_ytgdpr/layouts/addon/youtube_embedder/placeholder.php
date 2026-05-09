@@ -19,7 +19,9 @@ use Joomla\CMS\Language\Text;
  * @var string $title Video title
  */
 
-extract($displayData);
+$data = (isset($displayData) && is_array($displayData)) ? $displayData : [];
+$watchUrl = (string) ($data['watchUrl'] ?? '');
+$title = (string) ($data['title'] ?? '');
 ?>
 <div class="ytgdpr">
     <div class="ytgdpr-placeholder d-flex flex-column align-items-center justify-content-center gap-2" role="status" aria-live="polite">

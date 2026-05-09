@@ -14,17 +14,19 @@ use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Filesystem\Path;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Http\Http;
 use Joomla\CMS\Http\HttpFactory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Http\Response;
 use Joomla\Registry\Registry;
 
 class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
 {
     private ?int $cacheDurationSeconds = null;
 
-    private $httpClient = null;
+    private ?Http $httpClient = null;
 
     private const WATCH_URL_TEMPLATE = 'https://www.youtube.com/watch?v=%s';
 
@@ -79,6 +81,7 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
         ]);
     }
 
+    /** @return array<int, string> */
     public function stylesheets(): array
     {
         return [
@@ -129,8 +132,9 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
         if (in_array($host, $allowedYouTubeHosts, true)) {
             if (!empty($parts['query'])) {
                 parse_str($parts['query'], $query);
-                if (!empty($query['v']) && preg_match('/^[a-zA-Z0-9_-]{11}$/', $query['v'])) {
-                    return $query['v'];
+                $videoQuery = $query['v'] ?? '';
+                if (is_string($videoQuery) && $videoQuery !== '' && preg_match('/^[a-zA-Z0-9_-]{11}$/', $videoQuery)) {
+                    return $videoQuery;
                 }
             }
 
@@ -153,9 +157,10 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
         $cacheDuration = 3600;
         $plugin = PluginHelper::getPlugin('sppagebuilder', 'youtube_gdpr');
 
-        if ($plugin && isset($plugin->params)) {
+        if (is_object($plugin) && isset($plugin->params)) {
             $params = new Registry($plugin->params);
-            $configured = (int) $params->get('cache_duration', 3600);
+            $configuredValue = $params->get('cache_duration', 3600);
+            $configured = is_numeric($configuredValue) ? (int) $configuredValue : 3600;
             if ($configured > 0) {
                 $cacheDuration = $configured;
             }
@@ -219,6 +224,7 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
         return $fileUrl;
     }
 
+    /** @return array<string, string> */
     private function getCachedVideoMeta(string $videoId): array
     {
         $cacheDuration = $this->getCacheDurationSeconds();
@@ -230,8 +236,8 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
 
         if (File::exists($metaPath) && $this->isFresh($metaPath, $cacheDuration)) {
             $cached = json_decode((string) @file_get_contents($metaPath), true);
-            if (!empty($cached['title'])) {
-                return is_array($cached) ? $cached : [];
+            if (is_array($cached) && !empty($cached['title'])) {
+                return $cached;
             }
         }
 
@@ -252,6 +258,7 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
         return [];
     }
 
+    /** @return array<string, string> */
     private function fetchVideoMeta(string $videoId): array
     {
         $watchUrl = sprintf(self::WATCH_URL_TEMPLATE, rawurlencode($videoId));
@@ -347,18 +354,18 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
         return is_array($imageInfo) && !empty($imageInfo[0]) && !empty($imageInfo[1]);
     }
 
-    private function isImageResponse($response, string $body): bool
+    private function isImageResponse(Response $response, string $body): bool
     {
         if ($body === '' || strlen($body) < 1000) {
             return false;
         }
 
         $contentType = '';
-        if (isset($response->headers)) {
-            if (is_object($response->headers) && method_exists($response->headers, 'get')) {
-                $contentType = (string) $response->headers->get('Content-Type');
-            } elseif (is_array($response->headers) && isset($response->headers['Content-Type'])) {
-                $contentType = (string) $response->headers['Content-Type'];
+        $headers = $response->getHeaders();
+        if (isset($headers['Content-Type'])) {
+            $headerValue = $headers['Content-Type'];
+            if (is_array($headerValue) && isset($headerValue[0])) {
+                $contentType = $headerValue[0];
             }
         }
 
@@ -374,7 +381,7 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
         return $isJpeg || $isPng || $isWebp;
     }
 
-    private function getHttpClient()
+    private function getHttpClient(): Http
     {
         if ($this->httpClient === null) {
             $this->httpClient = HttpFactory::getHttp();
@@ -406,6 +413,7 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
         return (bool) $modified && (time() - (int) $modified) < $cacheDuration;
     }
 
+    /** @param array<string, mixed> $displayData */
     private function renderLayout(string $layoutName, array $displayData = []): string
     {
         $layoutFile = JPATH_PLUGINS . '/sppagebuilder/youtube_gdpr/layouts/addon/youtube_embedder/' . $layoutName . '.php';
@@ -416,6 +424,6 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
 
         ob_start();
         include $layoutFile;
-        return ob_get_clean();
+        return (string) ob_get_clean();
     }
 }
