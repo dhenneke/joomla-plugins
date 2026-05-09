@@ -4,7 +4,7 @@ All notable changes to this plugin should be documented in this file.
 
 The plugin version in `contactform.xml` should always match the latest released version documented here.
 
-## Unreleased
+## 1.1.2
 
 - Keep recipient email configuration scoped to each addon instance only.
 - Add IP-based submission rate limiting through Joomla's cache.
