@@ -13,7 +13,6 @@ defined('_JEXEC') or die;
 /**
  * @var array{
  *     formId?: string,
- *     formTitle?: string,
  *     actionUrl?: string,
  *     nameLabel?: string,
  *     emailLabel?: string,
@@ -38,7 +37,6 @@ defined('_JEXEC') or die;
  */
 $data = (isset($displayData) && is_array($displayData)) ? $displayData : [];
 $formId = $data['formId'] ?? '';
-$formTitle = $data['formTitle'] ?? '';
 $actionUrl = $data['actionUrl'] ?? '';
 $nameLabel = $data['nameLabel'] ?? '';
 $emailLabel = $data['emailLabel'] ?? '';
@@ -61,10 +59,6 @@ $feedbackType = $data['feedbackType'] ?? '';
 $feedbackText = $data['feedbackText'] ?? '';
 ?>
 <div class="sppb-contact-form-wrap">
-    <?php if ($formTitle !== '') : ?>
-        <h3 class="sppb-contact-form-title"><?php echo $formTitle; ?></h3>
-    <?php endif; ?>
-
     <?php if (!empty($feedbackText)) : ?>
         <div class="sppb-contact-form-feedback sppb-contact-form-feedback-<?php echo $feedbackType === 'success' ? 'success' : 'error'; ?>">
             <?php echo htmlspecialchars((string) $feedbackText, ENT_QUOTES, 'UTF-8'); ?>

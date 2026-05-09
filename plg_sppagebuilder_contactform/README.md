@@ -46,7 +46,7 @@ This extension is a third-party addon and is not affiliated with or endorsed by 
 ## Usage
 
 1. Open SP Page Builder and add the **Contact Form** addon.
-2. Set recipient email per addon instance, then optionally set title/button label and captcha behavior.
+2. Set recipient email per addon instance, then optionally set button label and captcha behavior.
 3. Save and publish page.
 
 ## Notes

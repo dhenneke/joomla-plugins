@@ -44,7 +44,6 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
     {
         $this->loadPluginLanguage();
 
-        $title = trim((string) $this->getSetting('form_title', Text::_('PLG_SPPAGEBUILDER_CONTACTFORM_DEFAULT_TITLE')));
         $submitLabel = trim((string) $this->getSetting('submit_label', Text::_('PLG_SPPAGEBUILDER_CONTACTFORM_DEFAULT_SUBMIT_LABEL')));
         $recipientEmail = trim((string) $this->getSetting('recipient_email', ''));
         $captchaEnabled = $this->isCaptchaEnabled();
@@ -78,7 +77,6 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
 
         return $this->renderLayout('default', [
             'formId' => $this->esc($formId),
-            'formTitle' => $this->esc($title),
             'actionUrl' => $this->esc($returnUrl),
             'addonId' => $addonId,
             'returnUrl' => $this->esc(base64_encode($returnUrl)),

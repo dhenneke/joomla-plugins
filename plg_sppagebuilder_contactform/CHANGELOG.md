@@ -4,6 +4,10 @@ All notable changes to this plugin should be documented in this file.
 
 The plugin version in `contactform.xml` should always match the latest released version documented here.
 
+## Unreleased
+
+- Remove the optional form title field and render the addon without a heading.
+
 ## 1.1.0
 
 - Add an optional privacy policy consent checkbox with editor-based custom text per addon instance.

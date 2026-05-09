@@ -35,12 +35,6 @@ SpAddonsConfig::addonConfig(
                     'desc' => Text::_('COM_SPPAGEBUILDER_ADDON_ADMIN_LABEL_DESC'),
                     'std' => '',
                 ],
-                'form_title' => [
-                    'type' => 'text',
-                    'title' => Text::_('PLG_SPPAGEBUILDER_CONTACTFORM_FIELD_FORM_TITLE_LABEL'),
-                    'desc' => Text::_('PLG_SPPAGEBUILDER_CONTACTFORM_FIELD_FORM_TITLE_DESC'),
-                    'std' => Text::_('PLG_SPPAGEBUILDER_CONTACTFORM_DEFAULT_TITLE'),
-                ],
                 'submit_label' => [
                     'type' => 'text',
                     'title' => Text::_('PLG_SPPAGEBUILDER_CONTACTFORM_FIELD_SUBMIT_LABEL_LABEL'),
