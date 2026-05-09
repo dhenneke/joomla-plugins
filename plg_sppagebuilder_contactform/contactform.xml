@@ -27,16 +27,4 @@
         <language tag="de-DE">de-DE/de-DE.plg_sppagebuilder_contactform.sys.ini</language>
     </languages>
 
-    <config>
-        <fields name="params">
-            <fieldset name="basic">
-                <field
-                    name="recipient_email"
-                    type="email"
-                    required="false"
-                    label="PLG_SPPAGEBUILDER_CONTACTFORM_RECIPIENT_EMAIL_LABEL"
-                    description="PLG_SPPAGEBUILDER_CONTACTFORM_RECIPIENT_EMAIL_DESC" />
-            </fieldset>
-        </fields>
-    </config>
 </extension>

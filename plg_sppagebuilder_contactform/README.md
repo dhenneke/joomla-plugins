@@ -26,10 +26,6 @@ This extension is a third-party addon and is not affiliated with or endorsed by 
 2. In Joomla backend go to **System -> Install -> Extensions** and upload the generated `out/plg_sppagebuilder_contactform-<version>.zip` file.
 3. Enable **SP Page Builder - Contact Form** in **System -> Plugins**.
 
-## Plugin Configuration
-
-- Recipient Email: optional fallback mailbox when an addon instance has no recipient set
-
 ## Versioning
 
 - The released plugin version is defined in `contactform.xml`.
