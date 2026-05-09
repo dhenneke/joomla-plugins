@@ -11,6 +11,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Captcha\Captcha;
+use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -26,6 +27,7 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
     private const MAX_SUBJECT_LENGTH = 180;
     private const MAX_MESSAGE_LENGTH = 5000;
 
+    /** @var array{name: string, email: string, subject: string, message: string} */
     private array $failedInput = [
         'name' => '',
         'email' => '',
@@ -85,6 +87,7 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
         ]);
     }
 
+    /** @return array<int, string> */
     public function stylesheets(): array
     {
         return [
@@ -130,7 +133,7 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
         $configured = trim((string) $this->getSetting('captcha_type', 'default'));
 
         if ($configured === '' || strtolower($configured) === 'default') {
-            return trim((string) ComponentHelper::getParams('com_config')->get('captcha'));
+            return trim($this->normalizeStringValue(ComponentHelper::getParams('com_config')->get('captcha')));
         }
 
         return $configured;
@@ -149,6 +152,7 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
         return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
     }
 
+    /** @param array<string, mixed> $displayData */
     private function renderLayout(string $layoutName, array $displayData = []): string
     {
         $layoutFile = JPATH_PLUGINS . '/sppagebuilder/contactform/layouts/addon/contact_form/' . $layoutName . '.php';
@@ -164,6 +168,7 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
 
     private function handleSubmitIfTargeted(int $addonId, string $captchaFieldName, string $recipientEmail, bool $captchaEnabled, string $captchaPlugin, string $defaultReturnUrl): void
     {
+        /** @var CMSApplication $app */
         $app = Factory::getApplication();
         $input = $app->input;
 
@@ -231,7 +236,10 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
             }
 
             $mailer = Factory::getMailer();
-            $mailer->setSender([(string) $config->get('mailfrom'), (string) $config->get('fromname')]);
+            $mailer->setSender([
+                $this->normalizeStringValue($config->get('mailfrom')),
+                $this->normalizeStringValue($config->get('fromname')),
+            ]);
             $mailer->addRecipient($resolvedRecipient);
             $mailer->setSubject($subject);
             $mailer->isHtml(false);
@@ -265,7 +273,9 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
             return false;
         }
 
-        $input = Factory::getApplication()->input;
+        /** @var CMSApplication $app */
+        $app = Factory::getApplication();
+        $input = $app->input;
         $captchaCode = $input->post->getString($fieldName, '');
 
         try {
@@ -329,7 +339,7 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
 
     private function buildMailBody(string $name, string $email, string $subject, string $message): string
     {
-        $siteName = (string) Factory::getConfig()->get('sitename');
+        $siteName = $this->normalizeStringValue(Factory::getConfig()->get('sitename'));
 
         return Text::sprintf(
             'PLG_SPPAGEBUILDER_CONTACTFORM_EMAIL_BODY',
@@ -361,6 +371,7 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
         ]);
     }
 
+    /** @param array{name?: string, email?: string, subject?: string, message?: string} $inputValues */
     private function setSubmissionFeedback(string $type, string $messageKey, array $inputValues): void
     {
         $this->failedInput = [
@@ -394,6 +405,7 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
         return $encodedPayload . '.' . $encodedSignature;
     }
 
+    /** @return array<string, int|string>|null */
     private function verifyStateToken(string $token, int $expectedAddonId): ?array
     {
         $token = trim($token);
@@ -446,7 +458,7 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
 
     private function getSigningKey(): ?string
     {
-        $secret = (string) Factory::getConfig()->get('secret', '');
+        $secret = $this->normalizeStringValue(Factory::getConfig()->get('secret', ''));
 
         if ($secret === '') {
             return null;
@@ -455,9 +467,24 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
         return $secret;
     }
 
+    private function normalizeStringValue(mixed $value): string
+    {
+        if (is_scalar($value)) {
+            return (string) $value;
+        }
+
+        if (is_object($value) && method_exists($value, '__toString')) {
+            return (string) $value;
+        }
+
+        return '';
+    }
+
     private function checkSameOriginRequest(): bool
     {
-        $server = Factory::getApplication()->input->server;
+        /** @var CMSApplication $app */
+        $app = Factory::getApplication();
+        $server = $app->input->server;
         $origin = trim((string) $server->getString('HTTP_ORIGIN', ''));
         $referer = trim((string) $server->getString('HTTP_REFERER', ''));
 
@@ -524,6 +551,7 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
         return $decoded === false ? null : $decoded;
     }
 
+    /** @param array<string, scalar|null> $context */
     private function logSecurityEvent(string $message, int $level, array $context = []): void
     {
         if ($context !== []) {

@@ -18,8 +18,9 @@ use Joomla\CMS\Language\Text;
  * @var string $message Error message
  */
 
-extract($displayData);
+$data = (isset($displayData) && is_array($displayData)) ? $displayData : [];
+$message = (string) ($data['message'] ?? Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_INVALID_URL'));
 ?>
 <div class="ytgdpr alert alert-danger mb-0" role="alert">
-    <?= $message ?? Text::_('PLG_SPPAGEBUILDER_YOUTUBE_GDPR_INVALID_URL') ?>
+    <?= $message ?>
 </div>

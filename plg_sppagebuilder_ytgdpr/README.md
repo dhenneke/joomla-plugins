@@ -1,4 +1,4 @@
-# sp-youtube-gdpr-plugin
+# YouTube GDPR Addon for SP Page Builder
 
 A GDPR-compliant YouTube video addon for [SP Page Builder](https://www.joomlashine.com/joomla-extensions/sp-page-builder.html). Instead of embedding an iframe that sets cookies the moment a page loads, this plugin displays a static thumbnail card. Visitors are only sent to YouTube when they actively click the link — no tracking cookies, no third-party requests until consent is given.
 
@@ -15,7 +15,7 @@ A GDPR-compliant YouTube video addon for [SP Page Builder](https://www.joomlashi
 
 ## Installation
 
-1. Run `build.bat` to produce `out/plg_sppagebuilder_ytgdpr.zip`, or download a release zip.
+1. Run `./build.sh` from the repository root to produce `out/plg_sppagebuilder_ytgdpr-<version>.zip`, or download a release zip.
 2. In the Joomla backend go to **System → Install → Extensions** and upload the zip.
 3. Go to **System → Plugins**, find **SP Page Builder – YouTube GDPR** and enable it.
 
@@ -28,6 +28,11 @@ In the plugin settings (System → Plugins → SP Page Builder – YouTube GDPR)
 | Parameter | Default | Description |
 |---|---|---|
 | Cache Duration (seconds) | 3600 | How long thumbnails and video metadata are cached on the server before being refreshed. |
+
+## Versioning
+
+- The released plugin version is defined in `youtube_gdpr.xml`.
+- Keep `youtube_gdpr.xml` and `CHANGELOG.md` in sync whenever you cut a release.
 
 ---
 

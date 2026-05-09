@@ -1,0 +1,20 @@
+{
+    "name": "dhenneke/joomla-plugins",
+    "description": "Monorepo for custom Joomla plugins, including SP Page Builder addons.",
+    "license": "GPL-3.0-or-later",
+    "type": "project",
+    "require-dev": {
+        "phpstan/phpstan": "^1.12"
+    },
+    "scripts": {
+        "lint": "phpstan analyse --configuration=phpstan.neon",
+        "lint:contactform": "phpstan analyse --configuration=phpstan.neon plg_sppagebuilder_contactform",
+        "lint:youtube": "phpstan analyse --configuration=phpstan.neon plg_sppagebuilder_ytgdpr"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/installers": true
+        }
+    }
+}
