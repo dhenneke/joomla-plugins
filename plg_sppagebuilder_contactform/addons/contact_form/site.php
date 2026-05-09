@@ -12,6 +12,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Captcha\Captcha;
 use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Cache\CacheControllerFactoryInterface;
+use Joomla\CMS\Cache\Controller\OutputController;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -27,6 +29,8 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
     private const MAX_EMAIL_LENGTH = 254;
     private const MAX_SUBJECT_LENGTH = 180;
     private const MAX_MESSAGE_LENGTH = 5000;
+    private const RATE_LIMIT_WINDOW_SECONDS = 900;
+    private const RATE_LIMIT_MAX_SUBMISSIONS = 5;
 
     /** @var array{name: string, email: string, subject: string, message: string, privacy: string} */
     private array $failedInput = [
@@ -240,6 +244,12 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
         if (!$this->checkSameOriginRequest()) {
             $this->logSecurityEvent('Rejected submission due to same-origin validation failure.', Log::WARNING, ['addon_id' => $addonId]);
             $this->setFailedSubmission('PLG_SPPAGEBUILDER_CONTACTFORM_ERROR_INVALID_SUBMISSION', $name, $email, $subject, $message, $privacyConsent);
+            return;
+        }
+
+        if (!$this->checkRateLimit($addonId)) {
+            $this->logSecurityEvent('Rejected submission due to rate limit.', Log::WARNING, ['addon_id' => $addonId]);
+            $this->setFailedSubmission('PLG_SPPAGEBUILDER_CONTACTFORM_ERROR_RATE_LIMIT', $name, $email, $subject, $message, $privacyConsent);
             return;
         }
 
@@ -563,7 +573,79 @@ class SppagebuilderAddonContact_form extends SppagebuilderAddons
             return $this->isSameOriginUrl($referer);
         }
 
-        return true;
+        return false;
+    }
+
+    private function checkRateLimit(int $addonId): bool
+    {
+        $clientKey = $this->getRateLimitClientKey();
+        if ($clientKey === '') {
+            return false;
+        }
+
+        $cacheKey = 'contactform_rate_' . hash('sha256', $addonId . ':' . $clientKey);
+        $now = time();
+
+        try {
+            /** @var CacheControllerFactoryInterface $cacheFactory */
+            $cacheFactory = Factory::getContainer()->get(CacheControllerFactoryInterface::class);
+            /** @var OutputController $cache */
+            $cache = $cacheFactory->createCacheController('output', [
+                'caching' => true,
+                'defaultgroup' => 'plg_sppagebuilder_contactform',
+                'lifetime' => (int) ceil(self::RATE_LIMIT_WINDOW_SECONDS / 60),
+                'storage' => 'file',
+            ]);
+
+            $state = $cache->get($cacheKey);
+            if ($state === false || !is_array($state)) {
+                $state = ['window_start' => 0, 'count' => 0];
+            }
+
+            $cachedWindowStart = $state['window_start'] ?? 0;
+            $cachedCount = $state['count'] ?? 0;
+            $windowStart = is_scalar($cachedWindowStart) ? (int) $cachedWindowStart : 0;
+            $count = is_scalar($cachedCount) ? (int) $cachedCount : 0;
+
+            if ($windowStart <= 0 || ($now - $windowStart) >= self::RATE_LIMIT_WINDOW_SECONDS) {
+                $windowStart = $now;
+                $count = 0;
+            }
+
+            if ($count >= self::RATE_LIMIT_MAX_SUBMISSIONS) {
+                return false;
+            }
+
+            if (!$cache->store(
+                ['window_start' => $windowStart, 'count' => $count + 1],
+                $cacheKey
+            )) {
+                return false;
+            }
+
+            return true;
+        } catch (Throwable $exception) {
+            $this->logSecurityEvent('Rate limit check failed.', Log::ERROR, [
+                'addon_id' => $addonId,
+                'error' => $exception->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
+
+    private function getRateLimitClientKey(): string
+    {
+        /** @var CMSApplication $app */
+        $app = Factory::getApplication();
+        $server = $app->input->server;
+        $ip = trim((string) $server->getString('REMOTE_ADDR', ''));
+
+        if ($ip === '') {
+            return '';
+        }
+
+        return $ip;
     }
 
     private function isSameOriginUrl(string $url): bool

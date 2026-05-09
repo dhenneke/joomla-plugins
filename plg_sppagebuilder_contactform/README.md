@@ -12,7 +12,7 @@ This extension is a third-party addon and is not affiliated with or endorsed by 
 - Server-side validation and mail dispatch through Joomla Mailer
 - Stateless signed form state token (HMAC + expiry) to reduce form tampering
 - Same-origin request check (Origin/Referer) as defense-in-depth
-- No session or file storage required for form handling
+- IP-based rate limiting through Joomla's cache
 
 ## Requirements
 
@@ -50,7 +50,8 @@ This extension is a third-party addon and is not affiliated with or endorsed by 
 
 - Captcha rendering uses Joomla's configured default captcha plugin from Global Configuration.
 - If no captcha plugin is configured and captcha is required, submission fails.
-- Form feedback is returned via redirect query parameters and rendered inline.
+- Form feedback is rendered inline after submission.
+- Submissions are limited to 5 same-origin attempts per IP address and addon instance per 15 minutes.
 - Field placeholders mirror the configured field labels.
 - The markup uses SP Page Builder form/grid classes such as `sppb-row`, `sppb-form-group`, `sppb-form-control`, and `sppb-form-check` where appropriate.
 - The addon relies on SP Page Builder's built-in group spacing and form-control styling instead of adding its own outer layout or field padding.
@@ -58,4 +59,4 @@ This extension is a third-party addon and is not affiliated with or endorsed by 
 
 ## License
 
-GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html. See ../LICENSE.
+GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html. See

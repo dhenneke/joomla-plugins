@@ -7,6 +7,8 @@ The plugin version in `contactform.xml` should always match the latest released 
 ## Unreleased
 
 - Keep recipient email configuration scoped to each addon instance only.
+- Add IP-based submission rate limiting through Joomla's cache.
+- Reject form submissions when neither Origin nor Referer is present for same-origin validation.
 
 ## 1.1.1
 
