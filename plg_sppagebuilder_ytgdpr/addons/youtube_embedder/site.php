@@ -32,6 +32,8 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
 
     private const CSS_FILE = 'media/plg_sppagebuilder_youtube_gdpr/assets/css/youtube_embedder.css';
 
+    private const MAX_THUMBNAIL_BYTES = 5242880;
+
     public function render(): string
     {
         $this->loadPluginLanguage();
@@ -337,6 +339,10 @@ class SppagebuilderAddonYoutube_embedder extends SppagebuilderAddons
                 }
 
                 $body = (string) $response->body;
+                if (strlen($body) > self::MAX_THUMBNAIL_BYTES) {
+                    continue;
+                }
+
                 if (!$this->isImageResponse($response, $body)) {
                     continue;
                 }
