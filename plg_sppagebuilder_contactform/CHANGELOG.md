@@ -9,6 +9,10 @@ The plugin version in `contactform.xml` should always match the latest released 
 - Remove the optional form title field and render the addon without a heading.
 - Add placeholders for the name, email, subject, and message fields based on their labels.
 - Reorder addon settings so captcha options are grouped together again.
+- Use SP Page Builder built-in form/grid classes in the form markup.
+- Use `sppb-form-control` and `sppb-form-check` markup so fields and consent controls follow SP Page Builder's built-in styling.
+- Rely on SP Page Builder's built-in group spacing instead of plugin-imposed outer layout or field padding.
+- Keep a usable textarea height without forcing border, radius, or background styling.
 
 ## 1.1.0
 

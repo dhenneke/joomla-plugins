@@ -66,49 +66,50 @@ $feedbackText = $data['feedbackText'] ?? '';
     <?php endif; ?>
 
     <?php if ($feedbackType !== 'success') : ?>
-        <form id="<?php echo $formId; ?>" class="sppb-contact-form" action="<?php echo $actionUrl; ?>" method="post">
-            <div class="sppb-contact-form-row">
-                <label for="<?php echo $formId; ?>-name"><?php echo $nameLabel; ?></label>
-                <input id="<?php echo $formId; ?>-name" name="cf_name" type="text" value="<?php echo $nameValue; ?>" placeholder="<?php echo $nameLabel; ?>" required>
+        <form id="<?php echo $formId; ?>" class="sppb-contact-form sppb-row" action="<?php echo $actionUrl; ?>" method="post">
+            <div class="sppb-contact-form-row sppb-form-group sppb-col-sm-12">
+                <label class="sppb-contact-form-label" for="<?php echo $formId; ?>-name"><?php echo $nameLabel; ?></label>
+                <input id="<?php echo $formId; ?>-name" class="form-control sppb-form-control" name="cf_name" type="text" value="<?php echo $nameValue; ?>" placeholder="<?php echo $nameLabel; ?>" required>
             </div>
 
-            <div class="sppb-contact-form-row">
-                <label for="<?php echo $formId; ?>-email"><?php echo $emailLabel; ?></label>
-                <input id="<?php echo $formId; ?>-email" name="cf_email" type="email" value="<?php echo $emailValue; ?>" placeholder="<?php echo $emailLabel; ?>" required>
+            <div class="sppb-contact-form-row sppb-form-group sppb-col-sm-12">
+                <label class="sppb-contact-form-label" for="<?php echo $formId; ?>-email"><?php echo $emailLabel; ?></label>
+                <input id="<?php echo $formId; ?>-email" class="form-control sppb-form-control" name="cf_email" type="email" value="<?php echo $emailValue; ?>" placeholder="<?php echo $emailLabel; ?>" required>
             </div>
 
-            <div class="sppb-contact-form-row">
-                <label for="<?php echo $formId; ?>-subject"><?php echo $subjectLabel; ?></label>
-                <input id="<?php echo $formId; ?>-subject" name="cf_subject" type="text" value="<?php echo $subjectValue; ?>" placeholder="<?php echo $subjectLabel; ?>" required>
+            <div class="sppb-contact-form-row sppb-form-group sppb-col-sm-12">
+                <label class="sppb-contact-form-label" for="<?php echo $formId; ?>-subject"><?php echo $subjectLabel; ?></label>
+                <input id="<?php echo $formId; ?>-subject" class="form-control sppb-form-control" name="cf_subject" type="text" value="<?php echo $subjectValue; ?>" placeholder="<?php echo $subjectLabel; ?>" required>
             </div>
 
-            <div class="sppb-contact-form-row">
-                <label for="<?php echo $formId; ?>-message"><?php echo $messageLabel; ?></label>
-                <textarea id="<?php echo $formId; ?>-message" name="cf_message" rows="6" placeholder="<?php echo $messageLabel; ?>" required><?php echo $messageValue; ?></textarea>
+            <div class="sppb-contact-form-row sppb-form-group sppb-col-sm-12">
+                <label class="sppb-contact-form-label" for="<?php echo $formId; ?>-message"><?php echo $messageLabel; ?></label>
+                <textarea id="<?php echo $formId; ?>-message" class="form-control sppb-form-control" name="cf_message" rows="6" placeholder="<?php echo $messageLabel; ?>" required><?php echo $messageValue; ?></textarea>
             </div>
 
             <?php if ($privacyConsentRequired) : ?>
-                <div class="sppb-contact-form-row sppb-contact-form-row-consent">
-                    <label class="sppb-contact-form-consent-label" for="<?php echo $formId; ?>-privacy">
+                <div class="sppb-contact-form-row sppb-form-group sppb-col-sm-12">
+                    <div class="sppb-form-check">
                         <input
                             id="<?php echo $formId; ?>-privacy"
+                            class="sppb-form-check-input"
                             name="cf_privacy_consent"
                             type="checkbox"
                             value="1"
                             <?php echo $privacyConsentChecked ? 'checked' : ''; ?>
                             required
                         >
-                        <span>
+                        <label class="sppb-form-check-label" for="<?php echo $formId; ?>-privacy">
                             <?php if ($privacyConsentHtml !== '') : ?>
                                 <?php echo $privacyConsentHtml; ?>
                             <?php endif; ?>
-                        </span>
-                    </label>
+                        </label>
+                    </div>
                 </div>
             <?php endif; ?>
 
             <?php if ($captchaHtml !== '') : ?>
-                <div class="sppb-contact-form-row sppb-contact-form-captcha-wrap">
+                <div class="sppb-contact-form-row sppb-contact-form-captcha-wrap sppb-form-group sppb-col-sm-12">
                     <?php echo $captchaHtml; ?>
                 </div>
             <?php endif; ?>
@@ -118,7 +119,9 @@ $feedbackText = $data['feedbackText'] ?? '';
             <input type="hidden" name="cf_return" value="<?php echo $returnUrl; ?>">
             <input type="hidden" name="cf_state" value="<?php echo $stateToken; ?>">
 
-            <button type="submit" class="sppb-btn sppb-btn-primary"><?php echo $submitLabel; ?></button>
+            <div class="sppb-form-button sppb-col-sm-12">
+                <button type="submit" class="sppb-btn sppb-btn-primary"><?php echo $submitLabel; ?></button>
+            </div>
         </form>
     <?php endif; ?>
 </div>

@@ -38,6 +38,7 @@ This extension is a third-party addon and is not affiliated with or endorsed by 
 ## Addon Configuration
 
 - Recipient Email: target mailbox for this form instance
+- Submit Button Label: custom text for the submit button per form instance
 - Require Privacy Policy Consent: toggle a required consent checkbox per form instance
 - Privacy Consent Text: editor field for the checkbox copy, including optional embedded links
 - Enable Captcha: toggle captcha per form instance
@@ -55,6 +56,9 @@ This extension is a third-party addon and is not affiliated with or endorsed by 
 - If no captcha plugin is configured and captcha is required, submission fails.
 - Form feedback is returned via redirect query parameters and rendered inline.
 - Field placeholders mirror the configured field labels.
+- The markup uses SP Page Builder form/grid classes such as `sppb-row`, `sppb-form-group`, `sppb-form-control`, and `sppb-form-check` where appropriate.
+- The addon relies on SP Page Builder's built-in group spacing and form-control styling instead of adding its own outer layout or field padding.
+- The textarea keeps a usable minimum height without forcing border, radius, or background styling onto the active template.
 
 ## License
 
