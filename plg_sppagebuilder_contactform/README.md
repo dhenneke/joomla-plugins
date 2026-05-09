@@ -59,4 +59,4 @@ This extension is a third-party addon and is not affiliated with or endorsed by 
 
 ## License
 
-GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html. See
+GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html. See ../LICENSE.
